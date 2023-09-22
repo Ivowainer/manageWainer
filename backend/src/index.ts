@@ -1,5 +1,8 @@
 import express from "express";
-import { ENV_CONFIG } from "./config/env.config";
+import dotenv from "dotenv";
+dotenv.config();
+
+import { ENV_CONFIG, db } from "./config";
 
 const app = express();
 
