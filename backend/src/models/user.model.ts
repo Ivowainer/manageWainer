@@ -1,4 +1,6 @@
 import { Model, Schema, model, models } from "mongoose";
+import bcrypt from "bcryptjs";
+
 import { IUser } from "../types/user.type";
 
 const userModel = new Schema(
@@ -20,8 +22,13 @@ userModel.pre("save", async function (next) {
         next();
     }
 
-    const salt = await bcrypt;
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 });
+
+userModel.methods.verificationPassword = async function (passwordForm: string) {
+    return await bcrypt.compare(passwordForm, this.password);
+};
 
 const User: Model<IUser> = models.User || model("User", userModel);
 
