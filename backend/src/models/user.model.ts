@@ -5,12 +5,12 @@ import { IUser } from "../types/user.type";
 
 const userModel = new Schema(
     {
-        name: { type: String, required: true },
         username: { type: String, required: true },
-        mail: { type: String, required: true },
+        email: { type: String, required: true },
         password: { type: String, required: true },
-        confirmed: { type: String, required: true },
-        exptoken: { type: String, required: true },
+        confirmed: { type: String, required: true, default: false },
+        exptoken: { type: String, required: true, default: "" },
+        projects: { type: Schema.Types.ObjectId, ref: "Project" },
     },
     {
         timestamps: true,

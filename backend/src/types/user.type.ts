@@ -1,7 +1,12 @@
+import { DaosReturn } from ".";
+
+export interface DaosReturnUser extends DaosReturn {
+    user: IUser;
+}
+
 export interface IUser {
-    name: string;
     username: string;
-    mail: string;
+    email: string;
     password: string;
     confirmed: boolean;
     exptoken: string;
