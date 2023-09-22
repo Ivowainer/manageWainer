@@ -9,7 +9,7 @@ const userModel = new Schema(
         email: { type: String, required: true },
         password: { type: String, required: true },
         confirmed: { type: String, required: true, default: false },
-        exptoken: { type: String, required: true, default: "" },
+        exptoken: { type: String, default: "" },
         projects: { type: Schema.Types.ObjectId, ref: "Project" },
     },
     {

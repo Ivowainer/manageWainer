@@ -1,10 +1,11 @@
-import type { Request, Response } from "express";
 import { Router } from "express";
+
+import { createUser } from "../controller/user.controller";
 
 const router = Router();
 
 // prettier-ignore
 router.route("/")
-    .post((req, res) => res.json({ msg: "Hi!" }));
+    .post(createUser);
 
 export default router;

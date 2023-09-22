@@ -10,6 +10,7 @@ const app = express();
 
 /*============= CONFIG =============*/
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 /*============= ROUTES =============*/
 

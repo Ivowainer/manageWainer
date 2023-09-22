@@ -2,8 +2,12 @@ import { User } from "../models";
 import { DaosReturnUser, IUser } from "../types/user.type";
 
 export class UserManipulation {
-    async createUser(userReq: IUser): Promise<DaosReturnUser> {
+    async createUser(userReq: Omit<IUser, "confirmed" | "exptoken">): Promise<DaosReturnUser> {
         const { email, username, password } = userReq;
+
+        if (![username, password, email].every(Boolean)) {
+            throw { codeResponse: 404, message: "User data is missing" };
+        }
 
         try {
             const userAlreadyExists = await User.findOne({ email }).select("-__v -updatedAt");
@@ -17,6 +21,8 @@ export class UserManipulation {
                 email,
                 password,
             });
+
+            await user.save();
 
             return { codeResponse: 200, message: "User created successfully!", user };
         } catch (error) {
