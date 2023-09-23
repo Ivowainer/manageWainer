@@ -1,8 +1,6 @@
 import { Types } from "mongoose";
-
 import { DaosReturnProject, IProject } from "../types/project.type";
 import Project from "../models/project.model";
-
 import { validations } from "../helper";
 
 export class ProjectManipulation {

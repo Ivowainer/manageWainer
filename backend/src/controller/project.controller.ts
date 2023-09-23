@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ProjectManipulation } from "../daos/Project.daos";
+import { ProjectManipulation } from "../daos/ProjectManipulation";
 import toObjectId from "../helper/mongoType";
 
 const DAOSProjectManipulation = new ProjectManipulation();
@@ -37,6 +37,16 @@ export const updateProject = async (req: Request, res: Response) => {
 export const addCollaborator = async (req: Request, res: Response) => {
     try {
         const { codeResponse, message, project } = await DAOSProjectManipulation.addCollaborator(req.user, req.params.projectId, req.params.userCollId);
+
+        res.status(codeResponse).json({ message, project });
+    } catch (error: any) {
+        res.status(error.codeResponse | 500).json({ message: error.message });
+    }
+};
+
+export const removeCollaborator = async (req: Request, res: Response) => {
+    try {
+        const { codeResponse, message, project } = await DAOSProjectManipulation.removeCollaborator(req.user, req.params.projectId, req.params.userCollId);
 
         res.status(codeResponse).json({ message, project });
     } catch (error: any) {
