@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 
 import { ENV_CONFIG, db } from "./config";
 
+import { Types } from "mongoose";
+
 import { userRoutes, projectRoutes } from "./routes";
 import { IUser } from "./types/user.type";
 
@@ -28,7 +30,7 @@ app.listen(ENV_CONFIG.PORT, () => {
 declare global {
     namespace Express {
         interface Request {
-            user: IUser;
+            user: Types.ObjectId;
         }
     }
 }

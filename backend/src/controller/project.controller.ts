@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { ProjectManipulation } from "../daos/Project.daos";
+import { Types } from "mongoose";
 
 const DAOSProjectManipulation = new ProjectManipulation();
 
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { codeResponse, message, project } = await DAOSProjectManipulation.createProject(req.body, req.user._id!);
+        const { codeResponse, message, project } = await DAOSProjectManipulation.createProject(req.body, req.user);
 
         res.status(codeResponse).json({ message, project });
     } catch (error: any) {
@@ -15,7 +16,7 @@ export const createProject = async (req: Request, res: Response) => {
 
 export const getProjects = async (req: Request, res: Response) => {
     try {
-        const { codeResponse, message, projects } = await DAOSProjectManipulation.getProjects(req.user._id!);
+        const { codeResponse, message, projects } = await DAOSProjectManipulation.getProjects(req.user);
 
         res.status(codeResponse).json({ message, projects });
     } catch (error: any) {

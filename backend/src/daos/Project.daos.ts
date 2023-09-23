@@ -5,7 +5,6 @@ import Project from "../models/project.model";
 
 export class ProjectManipulation {
     async getProjects(userId: Types.ObjectId): Promise<DaosReturnProject> {
-        console.log(userId);
         try {
             const projects = await Project.find({
                 $or: [{ collaborators: userId }, { creator: userId }],
@@ -38,6 +37,18 @@ export class ProjectManipulation {
             return { codeResponse: 200, message: "Project created successfully!", project };
         } catch (error: any) {
             throw { codeResponse: error.codeResponse | 500, message: error.message };
+        }
+    }
+
+    async updateProject(userId: Types.ObjectId): Promise<DaosReturnProject> {
+        try {
+            const projects = await Project.find({
+                $or: [{ collaborators: userId }, { creator: userId }],
+            });
+
+            return { codeResponse: 200, projects };
+        } catch (error: any) {
+            throw { codeResponse: 500, message: error.message };
         }
     }
 }

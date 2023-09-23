@@ -11,7 +11,11 @@ const checkAuth = async (req: any, res: Response, next: NextFunction) => {
             token = req.cookies.token;
             const decoded_id = (await isValidToken(token)) as any;
 
-            req.user = await User.findById(decoded_id).select("-password  -confirmed -exptoken -createdAt -updatedAt -__v");
+            /* await User.findById(decoded_id).select("-password  -confirmed -exptoken -createdAt -updatedAt -__v") */
+
+            req.user = decoded_id;
+
+            console.log(req.user);
 
             return next();
         } catch (error) {
