@@ -13,5 +13,5 @@ export interface IProject {
     description: string;
     deadline: Date;
     client: string;
-    collaborators: IUser[];
+    collaborators: string[] /*  | IUser[] */;
 }

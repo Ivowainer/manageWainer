@@ -33,3 +33,13 @@ export const updateProject = async (req: Request, res: Response) => {
         res.status(error.codeResponse | 500).json({ message: error.message });
     }
 };
+
+export const addCollaborator = async (req: Request, res: Response) => {
+    try {
+        const { codeResponse, message, project } = await DAOSProjectManipulation.addCollaborator(req.user, req.params.projectId, req.params.userCollId);
+
+        res.status(codeResponse).json({ message, project });
+    } catch (error: any) {
+        res.status(error.codeResponse | 500).json({ message: error.message });
+    }
+};

@@ -52,6 +52,7 @@ export class ProjectManipulation {
                 throw { codeResponse: 404, message: "The project doesn't exists" };
             }
 
+            // Verify User Session & Creator Project are the same
             await validations.verifyProjectOwner(project!.creator, userId);
 
             project!.client = client;
@@ -62,6 +63,39 @@ export class ProjectManipulation {
             const projectUpdated = await project!.save();
 
             return { codeResponse: 200, project: projectUpdated, message: "The project has updated successfully!" };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse | 500, message: error.message };
+        }
+    }
+
+    async addCollaborator(userId: Types.ObjectId, projectId: string, userCollId: string): Promise<DaosReturnProject> {
+        try {
+            const project = await Project.findById(projectId);
+
+            if (!project) {
+                throw { codeResponse: 404, message: "The project doesn't exists" };
+            }
+
+            // Verify User Session & Creator Project are the same
+            await validations.verifyProjectOwner(project!.creator, userId);
+
+            // Verify the project.creator doesn't the same of userCollId
+            if (project!.creator == (userCollId as unknown as Types.ObjectId)) {
+                throw { codeResponse: 403, message: "You cannot add yourself as a contributor" };
+            }
+
+            // Verify the project.creator doesn't the same of userCollId
+            project!.collaborators.map((val) => {
+                if (val == userCollId) {
+                    throw { codeResponse: 401, message: "The user you are trying to add is already a collaborator" };
+                }
+            });
+
+            project.collaborators.push(userCollId);
+
+            await project.save();
+
+            return { codeResponse: 200, message: "Collaborator Added!", project };
         } catch (error: any) {
             throw { codeResponse: error.codeResponse | 500, message: error.message };
         }

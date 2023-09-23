@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { createProject, getProjects, updateProject } from "../controller/project.controller";
+import { addCollaborator, createProject, getProjects, updateProject } from "../controller/project.controller";
 
 import checkAuth from "../middleware/checkAuth";
 
@@ -12,5 +12,6 @@ router.route('/')
     .post(checkAuth, createProject)
 
 router.put("/:projectId", checkAuth, updateProject);
+router.put("/:projectId/:userCollId", checkAuth, addCollaborator);
 
 export default router;
