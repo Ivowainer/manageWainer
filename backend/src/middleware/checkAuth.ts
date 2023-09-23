@@ -15,8 +15,6 @@ const checkAuth = async (req: any, res: Response, next: NextFunction) => {
 
             req.user = decoded_id;
 
-            console.log(req.user);
-
             return next();
         } catch (error) {
             res.status(500).json({ msg: "Error in JWT checkAuth" });

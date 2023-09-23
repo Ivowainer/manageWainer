@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 import { DaosReturnProject, IProject } from "../types/project.type";
 import Project from "../models/project.model";
 
+import { validations } from "../helper";
+
 export class ProjectManipulation {
     async getProjects(userId: Types.ObjectId): Promise<DaosReturnProject> {
         try {
@@ -40,15 +42,28 @@ export class ProjectManipulation {
         }
     }
 
-    async updateProject(userId: Types.ObjectId): Promise<DaosReturnProject> {
-        try {
-            const projects = await Project.find({
-                $or: [{ collaborators: userId }, { creator: userId }],
-            });
+    async updateProject(userId: Types.ObjectId, projectId: string, projectReq: Omit<IProject, "creator" | "collaborators">): Promise<DaosReturnProject> {
+        const { client, deadline, description, name } = projectReq;
 
-            return { codeResponse: 200, projects };
+        try {
+            const project = await Project.findById(projectId);
+
+            if (!project) {
+                throw { codeResponse: 404, message: "The project doesn't exists" };
+            }
+
+            await validations.verifyProjectOwner(project!.creator, userId);
+
+            project!.client = client;
+            project!.deadline = deadline;
+            project!.description = description;
+            project!.name = name;
+
+            const projectUpdated = await project!.save();
+
+            return { codeResponse: 200, project: projectUpdated, message: "The project has updated successfully!" };
         } catch (error: any) {
-            throw { codeResponse: 500, message: error.message };
+            throw { codeResponse: error.codeResponse | 500, message: error.message };
         }
     }
 }
