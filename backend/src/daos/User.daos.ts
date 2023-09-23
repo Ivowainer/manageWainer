@@ -46,7 +46,7 @@ export class UserManipulation {
             }
 
             if (!(await passwordB.verificationPassword(password, user.password))) {
-                throw { codeResponse: 401, message: "The password is incorrect" };
+                throw { codeResponse: 401, message: "The password are incorrect" };
             }
 
             const token = jwt.signToken(user._id, user.email);
