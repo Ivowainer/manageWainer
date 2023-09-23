@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { createProject } from "../controller/project.controller";
+import { createProject, getProjects } from "../controller/project.controller";
 
 import checkAuth from "../middleware/checkAuth";
 
@@ -8,6 +8,7 @@ const router = Router();
 
 // prettier-ignore
 router.route('/')
-    .post(checkAuth, createProject);
+    .get(checkAuth, getProjects)
+    .post(checkAuth, createProject)
 
 export default router;

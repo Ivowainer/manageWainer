@@ -12,3 +12,13 @@ export const createProject = async (req: Request, res: Response) => {
         res.status(error.codeResponse | 500).json({ message: error.message });
     }
 };
+
+export const getProjects = async (req: Request, res: Response) => {
+    try {
+        const { codeResponse, message, projects } = await DAOSProjectManipulation.getProjects(req.user._id!);
+
+        res.status(codeResponse).json({ message, projects });
+    } catch (error: any) {
+        res.status(error.codeResponse | 500).json({ message: error.message });
+    }
+};

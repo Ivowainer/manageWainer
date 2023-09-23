@@ -4,6 +4,19 @@ import { DaosReturnProject, IProject } from "../types/project.type";
 import Project from "../models/project.model";
 
 export class ProjectManipulation {
+    async getProjects(userId: Types.ObjectId): Promise<DaosReturnProject> {
+        console.log(userId);
+        try {
+            const projects = await Project.find({
+                $or: [{ collaborators: userId }, { creator: userId }],
+            });
+
+            return { codeResponse: 200, projects };
+        } catch (error: any) {
+            throw { codeResponse: 500, message: error.message };
+        }
+    }
+
     async createProject(projectReq: Omit<IProject, "creator" | "collaborators">, creator: Types.ObjectId): Promise<DaosReturnProject> {
         const { name, description, deadline, client } = projectReq;
 

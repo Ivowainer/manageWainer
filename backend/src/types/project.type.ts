@@ -3,7 +3,8 @@ import { DaosReturn } from ".";
 import { IUser } from "./user.type";
 
 export interface DaosReturnProject extends DaosReturn {
-    project: IProject;
+    project?: IProject;
+    projects?: IProject[];
 }
 
 export interface IProject {
