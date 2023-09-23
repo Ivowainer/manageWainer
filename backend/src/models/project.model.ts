@@ -6,7 +6,7 @@ const projectModel = new Schema(
     {
         creator: { type: Schema.Types.ObjectId, ref: "User" },
         name: { type: String, required: true },
-        description: { type: String, required: true },
+        description: { type: String, default: "This is the default description project" },
         deadline: { type: Date, required: true },
         client: { type: String },
         collaboratos: [{ type: Schema.Types.ObjectId, ref: "User" }],

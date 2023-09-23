@@ -11,7 +11,7 @@ export const createUser = async (req: Request, res: Response) => {
 
         res.status(codeResponse).json({ message, user, token });
     } catch (error: any) {
-        res.status(error.codeResponse).json({ message: error.message });
+        res.status(error.codeResponse | 500).json({ message: error.message });
     }
 };
 
@@ -23,6 +23,6 @@ export const loginUser = async (req: Request, res: Response) => {
 
         res.status(codeResponse).json({ message, user, token });
     } catch (error: any) {
-        res.status(error.codeResponse).json({ message: error.message });
+        res.status(error.codeResponse | 500).json({ message: error.message });
     }
 };
