@@ -1,3 +1,5 @@
+import { jwt, passwordB } from "../helper";
+
 import { User } from "../models";
 import { DaosReturnUser, IUser } from "../types/user.type";
 
@@ -13,7 +15,7 @@ export class UserManipulation {
             const userAlreadyExists = await User.findOne({ email }).select("-__v -updatedAt");
 
             if (userAlreadyExists) {
-                throw { codeResponse: 403, message: "User already registered", user: userAlreadyExists };
+                throw { codeResponse: 403, message: "User already registered" };
             }
 
             const user = new User({
@@ -24,9 +26,33 @@ export class UserManipulation {
 
             await user.save();
 
-            return { codeResponse: 200, message: "User created successfully!", user };
-        } catch (error) {
-            throw { codeResponse: 500, message: error };
+            const token = jwt.signToken(user._id, email);
+
+            return { codeResponse: 200, message: "User created successfully!, please check your email inbox", user, token };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse | 500, message: error.message };
+        }
+    }
+
+    async loginUser({ email, password }: Pick<IUser, "email" | "password">): Promise<DaosReturnUser> {
+        try {
+            const user = await User.findOne({ email }).select("-__v -updatedAt -exptoken -createdAt -updatedAt");
+
+            if (!user) {
+                throw { codeResponse: 404, message: "The user doesn't exists" };
+            }
+            if (user?.confirmed === false) {
+                throw { codeResponse: 403, message: "The user aren't confirmed" };
+            }
+
+            if (!(await passwordB.verificationPassword(password, user.password))) {
+                throw { codeResponse: 401, message: "The password is incorrect" };
+            }
+
+            const token = jwt.signToken(user._id, user.email);
+            return { codeResponse: 200, message: "Logged in successfully!", user, token };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse | 500, message: error.message };
         }
     }
 }
