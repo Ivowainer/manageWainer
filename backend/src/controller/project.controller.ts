@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { ProjectManipulation } from "../daos/ProjectManipulation";
-import toObjectId from "../helper/mongoType";
+import { ProjectManipulation } from "../daos/Project.daos";
 
 const DAOSProjectManipulation = new ProjectManipulation();
 

@@ -10,6 +10,7 @@ const projectModel = new Schema(
         deadline: { type: Date, required: true },
         client: { type: String },
         collaborators: [{ type: Schema.Types.ObjectId, ref: "User" }],
+        tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
     },
     {
         timestamps: true,

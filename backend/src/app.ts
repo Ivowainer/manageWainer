@@ -8,8 +8,7 @@ import { ENV_CONFIG, db } from "./config";
 
 import { Types } from "mongoose";
 
-import { userRoutes, projectRoutes } from "./routes";
-import { IUser } from "./types/user.type";
+import { userRoutes, projectRoutes, taskRoutes } from "./routes";
 
 const app = express();
 
@@ -19,9 +18,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 /*============= ROUTES =============*/
-
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
+app.use("/api/task", taskRoutes);
 
 app.listen(ENV_CONFIG.PORT, () => {
     console.log(`Server running on port ${ENV_CONFIG.PORT}`);

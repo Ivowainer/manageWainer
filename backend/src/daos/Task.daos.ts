@@ -1,0 +1,42 @@
+import { DaosReturnTask, ITask } from "../types/task.type";
+import { validations } from "../helper";
+
+import { Project } from "../models";
+
+import { Types } from "mongoose";
+
+import Task from "../models/task.model";
+
+export class TaskManipulation {
+    async createTask(userId: Types.ObjectId, projectId: string, taskInfo: Omit<ITask, "_id" | "project">): Promise<DaosReturnTask> {
+        const { description, priority, title } = taskInfo;
+
+        if (![description, priority, title].every(Boolean)) {
+            throw { codeResponse: 404, message: "Task data is missing" };
+        }
+
+        try {
+            const project = await Project.findById(projectId);
+
+            if (!project) {
+                throw { codeResponse: 404, message: "The project doesn't exists" };
+            }
+
+            // Verify User Session & Creator Project are the same
+            await validations.verifyProjectOwner(project!.creator, userId);
+
+            const task = new Task({
+                description,
+                priority,
+                title,
+                project: projectId,
+            });
+
+            await task.save();
+
+            return { codeResponse: 200, message: "The task has created successfully!", task };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse | 500, message: error.message };
+        }
+    }
+}
