@@ -25,3 +25,11 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.bg-main{
+  background-color: #10B981;
+  opacity: 1;
+  background-image:  radial-gradient(#ffffff 0.75px, transparent 0.75px), radial-gradient(#ffffff 0.75px, #10B981 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0,15px 15px;
+}

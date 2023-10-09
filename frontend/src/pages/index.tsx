@@ -1,13 +1,14 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import LoginForm from "../components/form/LoginForm";
 
 export default function Home() {
     return (
-        <main>
-            {/* <Image src="/people_talking.jpg" className="w-2/3" alt="Decorative Image Aside Login People Talking"></Image>
-            <div className=""></div> */}
+        <main className="flex h-screen w-screen bg-white ">
+            <div className="w-2/3 h-full bg-main flex justify-center items-center">
+                <p className="text-3xl font-semibold ">
+                    The perfect tool to communicate with your <span className="bg-white text-black px-6 py-2">colleagues</span>
+                </p>
+            </div>
+            <LoginForm />
         </main>
     );
 }
