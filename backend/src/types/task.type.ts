@@ -4,7 +4,8 @@ import { DaosReturn } from ".";
 import { IProject } from "./project.type";
 
 export interface DaosReturnTask extends DaosReturn {
-    task: ITask;
+    task?: ITask;
+    taskId?: Types.ObjectId;
 }
 
 enum priority {

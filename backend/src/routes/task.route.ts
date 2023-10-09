@@ -1,11 +1,14 @@
 import { Router } from "express";
 import checkAuth from "../middleware/checkAuth";
-import { createTask, updateProject } from "../controller/task.controller";
+import { createTask, deleteTask, updateTask } from "../controller/task.controller";
 
 const router = Router();
 
-// prettier-ignore
 router.post("/:projectId", checkAuth, createTask);
-router.put("/:taskId", checkAuth, updateProject);
+
+// prettier-ignore
+router.route("/:taskId")
+    .put(checkAuth, updateTask)
+    .delete(checkAuth, deleteTask);
 
 export default router;

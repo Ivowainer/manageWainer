@@ -62,4 +62,24 @@ export class TaskManipulation {
             throw { codeResponse: error.codeResponse | 500, message: error.message };
         }
     }
+
+    async deleteTask(userId: Types.ObjectId, taskId: string): Promise<DaosReturnTask> {
+        try {
+            // Verify the Task exitst
+            const task = await validations.checkDocumentExists(Task, taskId);
+
+            // Verify User Session & Creator Project are the same
+            const project = await Project.findById(task.project);
+            await validations.verifyProjectOwner(project!.creator, userId);
+
+            project!.tasks = project!.tasks.filter((val) => val.toString() != taskId);
+            await project!.save();
+
+            await task.deleteOne();
+
+            return { codeResponse: 200, message: "The task has been deleted", taskId: task._id };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse | 500, message: error.message };
+        }
+    }
 }
