@@ -2,7 +2,7 @@ import { Model, Schema, model, models } from "mongoose";
 
 import { IProject } from "../types/project.type";
 
-const projectModel = new Schema(
+const projectModel = new Schema<IProject>(
     {
         creator: { type: Schema.Types.ObjectId, ref: "User" },
         name: { type: String, required: true },
@@ -17,6 +17,6 @@ const projectModel = new Schema(
     }
 );
 
-const Project: Model<IProject> = models.Project || model("Project", projectModel);
+const Project: Model<IProject> = models.Project || model<IProject>("Project", projectModel);
 
 export default Project;

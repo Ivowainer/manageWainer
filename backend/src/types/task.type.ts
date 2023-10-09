@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types, Document } from "mongoose";
 
 import { DaosReturn } from ".";
 import { IProject } from "./project.type";
@@ -13,7 +13,7 @@ enum priority {
     "high",
 }
 
-export interface ITask {
+export interface ITask extends Document {
     _id?: Types.ObjectId;
     title: string;
     description: string;

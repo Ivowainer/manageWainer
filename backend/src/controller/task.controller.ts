@@ -13,3 +13,13 @@ export const createTask = async (req: Request, res: Response) => {
         res.status(error.codeResponse | 500).json({ message: error.message });
     }
 };
+
+export const updateProject = async (req: Request, res: Response) => {
+    try {
+        const { codeResponse, message, task } = await DAOSTaskManipulation.updateTask(req.user, req.params.taskId, req.body);
+
+        res.status(codeResponse).json({ message, task });
+    } catch (error: any) {
+        res.status(error.codeResponse | 500).json({ message: error.message });
+    }
+};
