@@ -30,7 +30,8 @@ export class UserManipulation {
 
             return { codeResponse: 200, message: "User created successfully!, please check your email inbox", user, token };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            console.log(error);
+            throw { codeResponse: error.codeResponse, message: error.message };
         }
     }
 
@@ -52,7 +53,7 @@ export class UserManipulation {
             const token = jwt.signToken(user._id, user.email);
             return { codeResponse: 200, message: "Logged in successfully!", user, token };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 }

@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 export interface IUser {
     _id?: string;
     username: string;
@@ -8,5 +9,5 @@ export interface IUser {
 }
 
 export type UserContextType = {
-    registerUser: ({ email, username, password }: Pick<IUser, "email" | "password" | "username">) => IUser;
+    registerUser: ({ email, username, password }: Pick<IUser, "email" | "password" | "username">) => any;
 };

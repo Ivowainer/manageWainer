@@ -10,7 +10,7 @@ export const createTask = async (req: Request, res: Response) => {
 
         res.status(codeResponse).json({ message, task });
     } catch (error: any) {
-        res.status(error.codeResponse | 500).json({ message: error.message });
+        res.status(error.codeResponse || 500).json({ message: error.message });
     }
 };
 
@@ -20,7 +20,7 @@ export const updateTask = async (req: Request, res: Response) => {
 
         res.status(codeResponse).json({ message, task });
     } catch (error: any) {
-        res.status(error.codeResponse | 500).json({ message: error.message });
+        res.status(error.codeResponse || 500).json({ message: error.message });
     }
 };
 
@@ -30,6 +30,6 @@ export const deleteTask = async (req: Request, res: Response) => {
 
         res.status(codeResponse).json({ message, taskId });
     } catch (error: any) {
-        res.status(error.codeResponse | 500).json({ message: error.message });
+        res.status(error.codeResponse || 500).json({ message: error.message });
     }
 };

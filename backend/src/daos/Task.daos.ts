@@ -36,7 +36,7 @@ export class TaskManipulation {
 
             return { codeResponse: 200, message: "The task has created successfully!", task };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 
@@ -59,7 +59,7 @@ export class TaskManipulation {
 
             return { codeResponse: 200, message: "The task has updated successfully!", task };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 
@@ -79,7 +79,7 @@ export class TaskManipulation {
 
             return { codeResponse: 200, message: "The task has been deleted", taskId: task._id };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 }

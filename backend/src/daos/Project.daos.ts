@@ -38,7 +38,7 @@ export class ProjectManipulation {
 
             return { codeResponse: 200, message: "Project created successfully!", project };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 
@@ -64,7 +64,7 @@ export class ProjectManipulation {
 
             return { codeResponse: 200, project: projectUpdated, message: "The project has updated successfully!" };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 
@@ -97,7 +97,7 @@ export class ProjectManipulation {
 
             return { codeResponse: 200, message: "Collaborator Added!", project };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 
@@ -118,7 +118,7 @@ export class ProjectManipulation {
 
             return { codeResponse: 200, message: "Collaborator removed successfully!", project };
         } catch (error: any) {
-            throw { codeResponse: error.codeResponse | 500, message: error.message };
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 }
