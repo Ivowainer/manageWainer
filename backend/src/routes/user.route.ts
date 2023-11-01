@@ -9,5 +9,6 @@ router.route('/')
     .post(loginUser);
 
 router.post("/register", createUser);
+router.get("/logout", createUser);
 
 export default router;

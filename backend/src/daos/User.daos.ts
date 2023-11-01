@@ -30,7 +30,6 @@ export class UserManipulation {
 
             return { codeResponse: 200, message: "User created successfully!, please check your email inbox", user, token };
         } catch (error: any) {
-            console.log(error);
             throw { codeResponse: error.codeResponse, message: error.message };
         }
     }

@@ -17,12 +17,13 @@ const checkAuth = async (req: any, res: Response, next: NextFunction) => {
 
             return next();
         } catch (error) {
-            res.status(500).json({ msg: "Error in JWT checkAuth" });
+            res.status(500).json({ message: "Error in JWT checkAuth" });
         }
     }
 
     if (!token) {
-        res.status(401).json({ msg: "The token isn't valid" });
+        console.log(req.cookies);
+        res.status(401).json({ message: "The token isn't valid" });
     }
 };
 

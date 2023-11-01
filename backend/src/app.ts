@@ -28,8 +28,10 @@ const corsOptions = {
             callback(new Error("Not allowed by CORS"));
         }
     },
+
+    credentials: true,
 };
-app.use(cors(/* corsOptions */));
+app.use(cors(corsOptions));
 /* process.env.FRONTEND_URL, optionsSuccessStatus: 200 */
 /*============= ROUTES =============*/
 app.use("/api/user", userRoutes);
