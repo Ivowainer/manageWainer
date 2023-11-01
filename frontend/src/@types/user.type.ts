@@ -10,4 +10,5 @@ export interface IUser {
 
 export type UserContextType = {
     registerUser: ({ email, username, password }: Pick<IUser, "email" | "password" | "username">) => any;
+    loginUser: ({ email, password }: Pick<IUser, "email" | "password">) => any;
 };

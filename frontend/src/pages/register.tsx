@@ -1,3 +1,8 @@
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+
+import { getCookie } from "cookies-next";
+
 import { RegisterForm } from "../components/form/RegisterForm";
 
 export default function RegisterPage() {
