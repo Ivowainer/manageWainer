@@ -15,6 +15,10 @@ export const UserContext = createContext<UserContextType | null>(null);
 
 const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState({
+        username: "john doe",
+        email: "john@gmail.com",
+    });
 
     const { push, pathname } = useRouter();
     const publicRoutes = ["/register", "/"];
@@ -26,6 +30,12 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             setIsLoggedIn(true);
         }
     }, []);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            setUser(JSON.parse(localStorage.getItem("user")!));
+        }
+    }, [isLoggedIn]);
 
     useEffect(() => {
         const currentRoute = pathname;
@@ -46,11 +56,11 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         if (![username, password, email].every(Boolean)) return toast.error("Fill in all the fields");
 
         const promiseDataResult = baseBackendUrl.post<AxiosResponse<IUser>>("/user/register", { email, username, password });
-
-        const response = await toast.promise(promiseDataResult, {
+        await toast.promise(promiseDataResult, {
             pending: "Loading",
             success: {
                 render({ data }: any) {
+                    console.log(data);
                     setCookie("token", data.data.token);
                     localStorage.setItem("user", JSON.stringify({ username: data.data.user.username, email: data.data.user.email }));
                     return `${data.data.message}`;
@@ -66,8 +76,6 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         });
 
         setIsLoggedIn(true);
-
-        return response;
     };
 
     const loginUser = async ({ email, password }: Pick<IUser, "email" | "password">) => {
@@ -78,7 +86,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
         const promiseDataResult = baseBackendUrl.post<AxiosResponse<IUser>>("/user/", { email, password });
 
-        const response = await toast.promise(promiseDataResult, {
+        await toast.promise(promiseDataResult, {
             pending: "Loading",
             success: {
                 render({ data }: any) {
@@ -90,7 +98,6 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             },
             error: {
                 render({ data }: any) {
-                    console.log("hokla");
                     return `${data.response.data.message}`;
                 },
                 icon: "🔴",
@@ -98,11 +105,33 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         });
 
         setIsLoggedIn(true);
-
-        return response;
     };
 
-    return <UserContext.Provider value={{ registerUser, loginUser }}>{children}</UserContext.Provider>;
+    const logout = async () => {
+        const promiseDataResult = baseBackendUrl("/user/logout");
+        /* setUser(null); */
+
+        await toast.promise(promiseDataResult, {
+            pending: "Loading",
+            success: {
+                render({ data }: any) {
+                    localStorage.removeItem("user");
+                    setIsLoggedIn(false);
+
+                    return data.data.message;
+                },
+                icon: "🟢",
+            },
+            error: {
+                render({ data }: any) {
+                    return `${data.response.data.message}`;
+                },
+                icon: "🔴",
+            },
+        });
+    };
+
+    return <UserContext.Provider value={{ registerUser, loginUser, user, logout }}>{children}</UserContext.Provider>;
 };
 
 export default UserProvider;

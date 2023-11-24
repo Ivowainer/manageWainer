@@ -1,49 +1,57 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useEffect, useContext, useState } from "react";
 
-import { getCookie } from "cookies-next";
+import { ProjectContext } from "@/context/projectContext";
+import { UserContext } from "@/context/userContext";
 
-import baseBackendUrl from "@/config/baseBackendUrl";
+import { Button, Input, Spinner, useDisclosure } from "@nextui-org/react";
 
-import { toast } from "react-toastify";
-import { Spinner } from "@nextui-org/react";
+import { IProject } from "@/@types/project.type";
+
+import NavBar from "@/components/project/NavBar";
+import ModalProject from "@/components/project/ModalProject";
+import CardProject from "@/components/project/CardProject";
 
 const ProjectsPage = () => {
-    const [projects, setProjects] = useState({});
-    const [loading, setLoading] = useState(false);
+    const { getProjects, loading, projects } = useContext(ProjectContext)!;
+    const { user } = useContext(UserContext)!;
 
-    const { push } = useRouter();
-
-    useEffect(() => {
-        if (!getCookie("token")) {
-            push("/");
-        }
-    }, [push]);
-
-    const getProjects = async () => {
-        try {
-            const data = await baseBackendUrl.get("/project");
-
-            setProjects(data.data.projects);
-
-            setLoading(true);
-        } catch (error: any) {
-            toast.error(error.response.data.message);
-        }
-    };
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
         getProjects();
-    }, []);
+    }, [getProjects]);
 
     return (
+        // TODO: MAINLAYOUT
+        // TODO: SOLUTION UNDEFINED NAME USER.USERNAME
         <div className="bg-gray-200 h-screen w-screen text-black">
             {loading ? (
-                /* {typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user")!).username : null} */
-                <div>
-                    <h1>Projects of </h1>
-                    <p>Projects:</p>
-                </div>
+                <>
+                    <NavBar username={user?.username}></NavBar>
+
+                    <main className="w-screen  px-24 py-7 flex flex-col gap-3">
+                        <Input
+                            classNames={{
+                                base: "max-w-full w-full h-11",
+                                mainWrapper: "h-full",
+                                input: "text-small pl-6",
+                                inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                            }}
+                            placeholder="Type to search..."
+                            size="sm"
+                            type="search"
+                        />
+                        <Button onPress={onOpen} className="bg-emerald-500 text-gray-100 w-1/6">
+                            + Create new project
+                        </Button>
+
+                        <ModalProject isOpen={isOpen} onClose={onOpenChange} />
+
+                        {projects.map((val: any) => (
+                            <CardProject key={val?.name} name={val.name} description={val.description} website={val.website} deadline={val.deadline} />
+                        ))}
+                    </main>
+                </>
             ) : (
                 <div className="w-full h-full flex justify-center items-center">
                     <Spinner color="success" />
