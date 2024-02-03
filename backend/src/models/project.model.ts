@@ -8,7 +8,7 @@ const projectModel = new Schema<IProject>(
         name: { type: String, required: true },
         description: { type: String, default: "This is the default description project" },
         deadline: { type: Date, required: true },
-        client: { type: String },
+        client: { type: String, required: true },
         collaborators: [{ type: Schema.Types.ObjectId, ref: "User" }],
         tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
     },

@@ -23,9 +23,31 @@ export const getProjects = async (req: Request, res: Response) => {
     }
 };
 
+export const getProject = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+
+    try {
+        const { codeResponse, message, project } = await DAOSProjectManipulation.getProject(req.user, projectId);
+
+        res.status(codeResponse).json({ message, project });
+    } catch (error: any) {
+        res.status(error.codeResponse | 500).json({ message: error.message });
+    }
+};
+
 export const updateProject = async (req: Request, res: Response) => {
     try {
         const { codeResponse, message, project } = await DAOSProjectManipulation.updateProject(req.user, req.params.projectId, req.body);
+
+        res.status(codeResponse).json({ message, project });
+    } catch (error: any) {
+        res.status(error.codeResponse || 500).json({ message: error.message });
+    }
+};
+
+export const deleteProject = async (req: Request, res: Response) => {
+    try {
+        const { codeResponse, message, project } = await DAOSProjectManipulation.deleteProject(req.user, req.params.projectId);
 
         res.status(codeResponse).json({ message, project });
     } catch (error: any) {

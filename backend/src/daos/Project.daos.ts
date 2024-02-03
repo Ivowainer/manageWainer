@@ -18,6 +18,20 @@ export class ProjectManipulation {
         }
     }
 
+    async getProject(userId: Types.ObjectId, projectId: string): Promise<DaosReturnProject> {
+        try {
+            const project = await validations.checkDocumentExists(Project, projectId);
+
+            if (!project.collaborators.includes(userId.toString()) || project.creator !== userId) {
+                throw { codeResponse: 401, message: "Unauthorized" };
+            }
+
+            return { codeResponse: 200, project };
+        } catch (error: any) {
+            throw { codeResponse: 500, message: error.message };
+        }
+    }
+
     async createProject(projectReq: Omit<IProject, "creator" | "collaborators">, creator: Types.ObjectId): Promise<DaosReturnProject> {
         const { name, description, deadline, client } = projectReq;
 
@@ -63,6 +77,25 @@ export class ProjectManipulation {
             const projectUpdated = await project!.save();
 
             return { codeResponse: 200, project: projectUpdated, message: "The project has updated successfully!" };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
+        }
+    }
+
+    async deleteProject(userId: Types.ObjectId, projectId: string): Promise<DaosReturnProject> {
+        try {
+            const project = await Project.findById(projectId).select("-__v -updatedAt");
+
+            if (!project) {
+                throw { codeResponse: 404, message: "The project doesn't exists" };
+            }
+
+            // Verify User Session & Creator Project are the same
+            await validations.verifyProjectOwner(project!.creator, userId);
+
+            await project.deleteOne();
+
+            return { codeResponse: 200, project, message: "The project has deleted successfully!" };
         } catch (error: any) {
             throw { codeResponse: error.codeResponse || 500, message: error.message };
         }

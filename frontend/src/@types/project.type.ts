@@ -1,11 +1,13 @@
 import { ITask } from "./task.type";
 
-export interface IProject extends Document {
+export interface IProject {
+    _id: string;
     creator: string;
     name: string;
     description: string;
-    deadline: Date;
+    deadline: string;
     client: string;
+    website: string;
     tasks: string[];
     collaborators: string[] /*  | IUser[] */;
 }
@@ -13,6 +15,8 @@ export interface IProject extends Document {
 export type ProjectContextType = {
     getProjects: () => void;
     createProject: ({ name, deadline, client, description }: { name: string; deadline: string; client: string; description?: string }) => void;
-    projects: IProject[] | {}[];
+    deleteProject: (id: string) => void;
+
+    projects: IProject[];
     loading: Boolean;
 };

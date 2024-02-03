@@ -9,16 +9,13 @@ import baseBackendUrl from "@/config/baseBackendUrl";
 
 import type { AxiosResponse } from "axios";
 
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState({
-        username: "john doe",
-        email: "john@gmail.com",
-    });
+    const [user, setUser] = useState(null);
 
     const { push, pathname } = useRouter();
     const publicRoutes = ["/register", "/"];
@@ -32,9 +29,12 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     }, []);
 
     useEffect(() => {
-        if (isLoggedIn) {
-            setUser(JSON.parse(localStorage.getItem("user")!));
-        }
+        (async () => {
+            if(getCookie("token"))
+                setUser((await baseBackendUrl("/user")).data.user)
+            else
+                setUser(null)
+        })()
     }, [isLoggedIn]);
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             push("/projects");
             return;
         }
-    }, [push, pathname, isLoggedIn]);
+    }, [push, pathname, isLoggedIn, publicRoutes]);
 
     /* -- */
     const registerUser = async ({ email, username, password }: Pick<IUser, "email" | "password" | "username">) => {
@@ -63,19 +63,19 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                     console.log(data);
                     setCookie("token", data.data.token);
                     localStorage.setItem("user", JSON.stringify({ username: data.data.user.username, email: data.data.user.email }));
+                    setIsLoggedIn(true);
                     return `${data.data.message}`;
                 },
                 icon: "🟢",
             },
             error: {
                 render({ data }: any) {
+                    console.log(data)
                     return `${data.response.data.message}`;
                 },
                 icon: "🔴",
             },
         });
-
-        setIsLoggedIn(true);
     };
 
     const loginUser = async ({ email, password }: Pick<IUser, "email" | "password">) => {
@@ -109,15 +109,15 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
     const logout = async () => {
         const promiseDataResult = baseBackendUrl("/user/logout");
-        /* setUser(null); */
-
+        setIsLoggedIn(false);
+        setUser(null);
+        push("/")
+        localStorage.removeItem("user");
+        
         await toast.promise(promiseDataResult, {
             pending: "Loading",
             success: {
                 render({ data }: any) {
-                    localStorage.removeItem("user");
-                    setIsLoggedIn(false);
-
                     return data.data.message;
                 },
                 icon: "🟢",
