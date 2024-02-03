@@ -1,11 +1,12 @@
 import { Router } from "express";
 
-import { createUser, loginUser, logout } from "../controller/user.controller";
+import { createUser, getProfile, loginUser, logout } from "../controller/user.controller";
 
 const router = Router();
 
 // prettier-ignore
 router.route('/')
+    .get(getProfile)
     .post(loginUser);
 
 router.post("/register", createUser);

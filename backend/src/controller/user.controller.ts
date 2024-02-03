@@ -27,6 +27,18 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 };
 
+export const getProfile = async (req: Request, res: Response) => {
+    const { token } = req.cookies;
+
+    try {
+        const { codeResponse, message, user } = await DAOSUserManipulation.getProfile(token);
+
+        res.status(codeResponse).json({ message, user, token });
+    } catch (error: any) {
+        res.status(error.codeResponse || 500).json({ message: error.message });
+    }
+};
+
 export const logout = async (req: Request, res: Response) => {
     try {
         res.clearCookie("token");

@@ -1,4 +1,4 @@
-import { jwt, passwordB } from "../helper";
+import { jwt, passwordB, userExcludeProp } from "../helper";
 
 import { User } from "../models";
 import { DaosReturnUser, IUser } from "../types/user.type";
@@ -28,7 +28,7 @@ export class UserManipulation {
 
             const token = jwt.signToken(user._id, email);
 
-            return { codeResponse: 200, message: "User created successfully!, please check your email inbox", user, token };
+            return { codeResponse: 200, message: "User created successfully!, please check your email inbox", user: userExcludeProp.userExcludePropPassword(user), token };
         } catch (error: any) {
             throw { codeResponse: error.codeResponse, message: error.message };
         }
@@ -38,19 +38,28 @@ export class UserManipulation {
         try {
             const user = await User.findOne({ email }).select("-__v -updatedAt -exptoken -createdAt -updatedAt");
 
-            if (!user) {
-                throw { codeResponse: 404, message: "The user doesn't exists" };
-            }
-            if (user?.confirmed === false) {
-                throw { codeResponse: 403, message: "The user aren't confirmed" };
-            }
+            if (!user) throw { codeResponse: 404, message: "The user doesn't exists" };
+
+            if (user?.confirmed == false) throw { codeResponse: 403, message: "The user isn't confirmed" };
 
             if (!(await passwordB.verificationPassword(password, user.password))) {
                 throw { codeResponse: 401, message: "The password are incorrect" };
             }
 
             const token = jwt.signToken(user._id, user.email);
-            return { codeResponse: 200, message: "Logged in successfully!", user, token };
+            return { codeResponse: 200, message: "Logged in successfully!", user: userExcludeProp.userExcludePropPassword(user), token };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
+        }
+    }
+
+    async getProfile(token: string): Promise<DaosReturnUser> {
+        try {
+            const user = await User.findById(await jwt.isValidToken(token)).select("-__v -updatedAt -exptoken -createdAt -updatedAt");
+
+            if (!user) throw { codeResponse: 404, message: "The user doesn't exists" };
+
+            return { codeResponse: 200, message: "User Profile", token, user: userExcludeProp.userExcludePropPassword(user) };
         } catch (error: any) {
             throw { codeResponse: error.codeResponse || 500, message: error.message };
         }

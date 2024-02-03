@@ -4,7 +4,7 @@ import { DaosReturn } from ".";
 
 export interface DaosReturnUser extends DaosReturn {
     token: string;
-    user: IUser;
+    user: Omit<IUser, "password" | "exptoken">;
 }
 
 export interface IUser {
