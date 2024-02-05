@@ -1,5 +1,7 @@
 import { ITask } from "@/@types/task.type";
+import { useProjectContext } from "@/context/projectContext";
 import { useTaskContext } from "@/context/taskContext";
+import { useUserContext } from "@/context/userContext";
 import Link from "next/link";
 import { useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -11,6 +13,8 @@ interface ICardProjectProps {
 
 const CardProject = ({ index, task }: ICardProjectProps) => {
     const { tasks, deleteTask } = useTaskContext()!
+    const { user } = useUserContext()!
+    const { project } = useProjectContext()!
 
     const date = new Date(task?.createdAt)
     const options = {
@@ -33,7 +37,7 @@ const CardProject = ({ index, task }: ICardProjectProps) => {
             </div>
             <div className="flex gap-2">
                 <button /* onClick={() => deleteProject(id)} */ className="px-3 py-2 rounded-xl bg-gray-500 text-white uppercase">Incomplete</button>
-                <button onClick={() => deleteTask(task?._id!)} className="px-3 py-2 rounded-xl bg-red-500 text-white"><FaRegTrashAlt /></button>
+                { project?.creator.toString() == user?._id && <button onClick={() => deleteTask(task?._id!)} className="px-3 py-2 rounded-xl bg-red-500 text-white"><FaRegTrashAlt /></button> }
             </div>
         </div>
     );

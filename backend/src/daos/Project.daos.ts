@@ -1,9 +1,11 @@
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 
 import { DaosReturnProject, IProject } from "../types/project.type";
 import Project from "../models/project.model";
 
 import { validations } from "../helper";
+import { User } from "../models";
+import { IUser } from "../types/user.type";
 
 export class ProjectManipulation {
     async getProjects(userId: Types.ObjectId): Promise<DaosReturnProject> {
@@ -101,55 +103,73 @@ export class ProjectManipulation {
         }
     }
 
-    async addCollaborator(userId: Types.ObjectId, projectId: string, userCollId: string): Promise<DaosReturnProject> {
+    /* COLLABORATORS */
+    async getCollaborators(userId: Types.ObjectId, projectId: string): Promise<DaosReturnProject> {
         try {
-            const project = await Project.findById(projectId);
+            const project = await validations.checkDocumentExists(Project, projectId);
+            await project.populate("collaborators");
 
-            if (!project) {
-                throw { codeResponse: 404, message: "The project doesn't exists" };
-            }
+            await validations.verifyProjectOwner(project.creator._id, userId);
 
-            // Verify User Session & Creator Project are the same
-            await validations.verifyProjectOwner(project!.creator, userId);
-
-            // Verify the project.creator doesn't the same of userCollId
-            if (project!.creator == (userCollId as unknown as Types.ObjectId)) {
-                throw { codeResponse: 403, message: "You cannot add yourself as a contributor" };
-            }
-
-            // Verify the userCollId aren't in the Collaborators arr
-            project!.collaborators.map((val) => {
-                if (val == userCollId) {
-                    throw { codeResponse: 401, message: "The user you are trying to add is already a collaborator" };
-                }
-            });
-
-            project.collaborators.push(userCollId);
-
-            await project.save();
-
-            return { codeResponse: 200, message: "Collaborator Added!", project };
+            return { codeResponse: 200, collaborators: project.collaborators as unknown as IUser[] };
         } catch (error: any) {
             throw { codeResponse: error.codeResponse || 500, message: error.message };
         }
     }
 
-    async removeCollaborator(userId: Types.ObjectId, projectId: string, userCollId: string) {
+    async addCollaborator(userId: Types.ObjectId, projectId: string, username: string): Promise<DaosReturnProject> {
         try {
-            const project = await Project.findById(projectId);
+            const project = await validations.checkDocumentExists(Project, projectId);
+            await project?.populate("creator");
 
-            if (!project) {
+            const userToAdd = await User.find({ username });
+
+            if (userToAdd.length == 0) throw { codeResponse: 404, message: "The user doesn't exists" };
+
+            // Verify User Session & Creator Project are the same
+            await validations.verifyProjectOwner(project.creator._id, userId);
+
+            // Verify the project.creator doesn't the same of userCollId}
+            if (project.creator._id.toString() == userToAdd[0]._id.toString()) {
+                throw { codeResponse: 403, message: "You cannot add yourself as a contributor" };
+            }
+
+            // Verify the userCollId aren't in the Collaborators arr
+            project.collaborators.map((val) => {
+                if (val == userToAdd[0]._id.toString()) {
+                    throw { codeResponse: 401, message: "The user you are trying to add is already a collaborator" };
+                }
+            });
+
+            project.collaborators.push(userToAdd[0]._id.toString());
+
+            await project.save();
+
+            return { codeResponse: 200, message: "Collaborator Added!", collaborator: userToAdd[0] };
+        } catch (error: any) {
+            throw { codeResponse: error.codeResponse || 500, message: error.message };
+        }
+    }
+
+    async removeCollaborator(userId: Types.ObjectId, projectId: string, userCollId: string): Promise<DaosReturnProject> {
+        try {
+            const project = await validations.checkDocumentExists(Project, projectId);
+            const user = await User.findById(userCollId);
+
+            if (!user) {
                 throw { codeResponse: 404, message: "The project doesn't exists" };
             }
 
             // Verify User Session & Creator Project are the same
             await validations.verifyProjectOwner(project!.creator, userId);
 
+            if (!project.collaborators.includes(userCollId)) throw { codeResponse: 404, message: "The user doesn't exists in the Collaborators arr" };
+
             project.collaborators = project!.collaborators.filter((val) => val != userCollId);
 
             await project.save();
 
-            return { codeResponse: 200, message: "Collaborator removed successfully!", project };
+            return { codeResponse: 200, message: "Collaborator removed successfully!", collaborator: user };
         } catch (error: any) {
             throw { codeResponse: error.codeResponse || 500, message: error.message };
         }

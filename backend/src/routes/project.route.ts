@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { addCollaborator, createProject, deleteProject, getProject, getProjects, removeCollaborator, updateProject } from "../controller/project.controller";
+import { addCollaborator, createProject, deleteProject, getCollaborators, getProject, getProjects, removeCollaborator, updateProject } from "../controller/project.controller";
 
 import checkAuth from "../middleware/checkAuth";
 
@@ -18,8 +18,10 @@ router.route("/:projectId")
     .delete(checkAuth, deleteProject);
 
 // prettier-ignore
-router.route('/:projectId/:userCollId')
-    .put(checkAuth, addCollaborator)
-    .delete(checkAuth, removeCollaborator);
+router.route('/:projectId/coll')
+    .get(checkAuth, getCollaborators)
+    .post(checkAuth, addCollaborator)
+
+router.delete("/:projectId/coll/:userCollId", checkAuth, removeCollaborator);
 
 export default router;

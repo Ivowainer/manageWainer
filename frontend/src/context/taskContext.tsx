@@ -11,12 +11,17 @@ const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const [tasks, setTasks] = useState<ITask[]>([])
     const [loading, setLoading] = useState(false)
 
+    useEffect(() => {
+        console.log(tasks)
+    }, [tasks])
+
     const createTask = async ({ title, description, priority, projectId }: { title: string; description: string, priority: string, projectId: string }) => {
         try {
             const { data } = await baseBackendUrl.post(`/task/${projectId}`, { title, description, priority });
             
+            setTasks([...tasks, data.task])
+
             toast.success(data.message);
-            tasks?.push(data.task);
         } catch (error: any) {
             toast.error(error?.response?.data?.message);
         }

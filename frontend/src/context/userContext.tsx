@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 
 import { getCookie, setCookie } from "cookies-next";
 
@@ -134,5 +134,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
     return <UserContext.Provider value={{ registerUser, loginUser, user, logout }}>{children}</UserContext.Provider>;
 };
+
+export const useUserContext = () => useContext(UserContext)!;
 
 export default UserProvider;

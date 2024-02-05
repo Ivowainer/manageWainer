@@ -16,6 +16,16 @@ const ModalProject = ({ isOpen, onClose }: ModelProjectProps) => {
     const [deadline, setDeadline] = useState("");
     const [client, setClient] = useState("");
 
+    const handleCreateProject = () => {
+        createProject({ name, deadline, client, description })
+        onClose()
+        setName("")
+        setDescription("")
+        setWebsite("")
+        setDeadline("")
+        setClient("")
+    }
+
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} placement="top-center">
             <ModalContent>
@@ -46,7 +56,7 @@ const ModalProject = ({ isOpen, onClose }: ModelProjectProps) => {
                             <Button color="danger" onPress={onClose} className="text-white">
                                 Cancel
                             </Button>
-                            <Button color="success" onPress={() => createProject({ name, deadline, client, description })} className="text-white">
+                            <Button color="success" onPress={handleCreateProject} className="text-white">
                                 Create
                             </Button>
                         </ModalFooter>

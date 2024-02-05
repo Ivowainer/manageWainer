@@ -15,6 +15,14 @@ const ModalTask = ({ isOpen, onClose }: ModalTaskProp) => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [priority, setPriority] = useState("")
+
+    const handleCreateTask = () => {
+        createTask({ title, description, priority, projectId: project?._id!})
+        onClose()
+        setTitle("")
+        setDescription("")
+        setPriority("")
+    }
     
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} placement="top-center">
@@ -35,7 +43,7 @@ const ModalTask = ({ isOpen, onClose }: ModalTaskProp) => {
                             <Button color="danger" onPress={onClose} className="text-white">
                                 Cancel
                             </Button>
-                            <Button color="success" onPress={() => createTask({ title, description, priority, projectId: project?._id! })} className="text-white">
+                            <Button color="success" onPress={handleCreateTask} className="text-white">
                                 Create
                             </Button>
                         </ModalFooter>

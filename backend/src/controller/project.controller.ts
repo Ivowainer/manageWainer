@@ -55,11 +55,23 @@ export const deleteProject = async (req: Request, res: Response) => {
     }
 };
 
-export const addCollaborator = async (req: Request, res: Response) => {
+export const getCollaborators = async (req: Request, res: Response) => {
     try {
-        const { codeResponse, message, project } = await DAOSProjectManipulation.addCollaborator(req.user, req.params.projectId, req.params.userCollId);
+        const { codeResponse, message, collaborators } = await DAOSProjectManipulation.getCollaborators(req.user, req.params.projectId);
 
-        res.status(codeResponse).json({ message, project });
+        res.status(codeResponse).json({ message, collaborators });
+    } catch (error: any) {
+        res.status(error.codeResponse || 500).json({ message: error.message });
+    }
+};
+
+export const addCollaborator = async (req: Request, res: Response) => {
+    const { username } = req.body;
+
+    try {
+        const { codeResponse, message, collaborator } = await DAOSProjectManipulation.addCollaborator(req.user, req.params.projectId, username);
+
+        res.status(codeResponse).json({ message, collaborator });
     } catch (error: any) {
         res.status(error.codeResponse || 500).json({ message: error.message });
     }
@@ -67,9 +79,9 @@ export const addCollaborator = async (req: Request, res: Response) => {
 
 export const removeCollaborator = async (req: Request, res: Response) => {
     try {
-        const { codeResponse, message, project } = await DAOSProjectManipulation.removeCollaborator(req.user, req.params.projectId, req.params.userCollId);
+        const { codeResponse, message, collaborator } = await DAOSProjectManipulation.removeCollaborator(req.user, req.params.projectId, req.params.userCollId);
 
-        res.status(codeResponse).json({ message, project });
+        res.status(codeResponse).json({ message, collaborator });
     } catch (error: any) {
         res.status(error.codeResponse || 500).json({ message: error.message });
     }
