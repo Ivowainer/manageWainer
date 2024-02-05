@@ -6,7 +6,7 @@ const taskModel = new Schema(
     {
         title: { type: String, required: true },
         description: { type: String, required: true },
-        status: { type: Number, required: true, enum: [0, 1], default: 0 },
+        status: { type: Boolean, required: true, default: false },
         priority: { type: String, required: true, enum: ["low", "medium", "high"] },
         project: { type: Schema.Types.ObjectId, ref: "Project" },
     },

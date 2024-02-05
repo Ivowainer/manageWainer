@@ -1,7 +1,6 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect } from "react";
 
-import { ProjectContext } from "@/context/projectContext";
-import { UserContext } from "@/context/userContext";
+import { useProjectContext } from "@/context/projectContext";
 
 import { Button, Input, Spinner, useDisclosure } from "@nextui-org/react";
 
@@ -11,7 +10,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import { IProject } from "@/@types/project.type";
 
 const ProjectsPage = () => {
-    const { getProjects, loading, projects } = useContext(ProjectContext)!;
+    const { getProjects, loading, projects } = useProjectContext()!;
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -26,6 +25,7 @@ const ProjectsPage = () => {
             {loading ? (
                 <MainLayout pageName="Projects" pageDescription="Projects">
                     <main className="w-screen px-24 py-7 flex flex-col gap-3">
+
                         <Input
                             classNames={{
                                 base: "max-w-full w-full h-11",
@@ -37,8 +37,8 @@ const ProjectsPage = () => {
                             size="sm"
                             type="search"
                         />
-                        <Button onPress={onOpen} className="bg-emerald-500 text-gray-100 w-1/6">+ Create new project</Button>
 
+                        <Button onPress={onOpen} className="bg-emerald-500 text-gray-100 w-1/6">+ Create new project</Button>
                         <ModalProject isOpen={isOpen} onClose={onOpenChange} />
 
                         <div className={`border border-gray-300 rounded-xl shadow-sm`}>

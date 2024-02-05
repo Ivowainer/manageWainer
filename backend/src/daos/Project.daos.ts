@@ -22,7 +22,7 @@ export class ProjectManipulation {
         try {
             const project = await validations.checkDocumentExists(Project, projectId);
 
-            if (!project.collaborators.includes(userId.toString()) || project.creator !== userId) {
+            if (!project.collaborators.includes(userId.toString()) && project.creator.toString() != userId.toString()) {
                 throw { codeResponse: 401, message: "Unauthorized" };
             }
 

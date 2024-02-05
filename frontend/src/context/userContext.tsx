@@ -56,7 +56,8 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         if (![username, password, email].every(Boolean)) return toast.error("Fill in all the fields");
 
         const promiseDataResult = baseBackendUrl.post<AxiosResponse<IUser>>("/user/register", { email, username, password });
-        await toast.promise(promiseDataResult, {
+        
+        toast.promise(promiseDataResult, {
             pending: "Loading",
             success: {
                 render({ data }: any) {
@@ -84,27 +85,27 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             return;
         }
 
-        const promiseDataResult = baseBackendUrl.post<AxiosResponse<IUser>>("/user/", { email, password });
+        const promise  = baseBackendUrl.post<AxiosResponse<IUser>>("/user/", { email, password }) as any;
+        toast.promise(
+            promise, {
+                pending: "Loading...",
+                success: {
+                    render({ data }: any){
+                        setCookie("token", data.data.token);
+                        localStorage.setItem("user", JSON.stringify({ username: data.data.user.username, email: data.data.user.email }));
+                        toast.success(data.data.message); 
 
-        await toast.promise(promiseDataResult, {
-            pending: "Loading",
-            success: {
-                render({ data }: any) {
-                    setCookie("token", data.data.token);
-                    localStorage.setItem("user", JSON.stringify({ username: data.data.user.username, email: data.data.user.email }));
-                    return `${data.data.message}`;
+                        setIsLoggedIn(true);
+                        return `Welcome! ${data.data.user.username}`
+                    }
                 },
-                icon: "🟢",
-            },
-            error: {
-                render({ data }: any) {
-                    return `${data.response.data.message}`;
-                },
-                icon: "🔴",
-            },
-        });
-
-        setIsLoggedIn(true);
+                error: {
+                    render({ data: { response: { data } }  }: any){
+                        return data.message
+                    }
+                }
+            }
+        )
     };
 
     const logout = async () => {

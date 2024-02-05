@@ -10,6 +10,7 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [projects, setProjects] = useState<IProject[]>([]);
+    const [project, setProject] = useState<IProject | null>(null);
     const [loading, setLoading] = useState(false);
 
     const getProjects = async () => {
@@ -18,6 +19,18 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
             setProjects(data.projects);
 
+            setLoading(true);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    };
+
+    const getProject = async (id: string) => {
+        try {
+            const { data } = await baseBackendUrl.get(`/project/${id}`);
+
+
+            setProject(data.project);
             setLoading(true);
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -49,9 +62,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         }
     };
 
-    return <ProjectContext.Provider value={{ getProjects, projects, createProject, loading, deleteProject }}>{children}</ProjectContext.Provider>;
+    return <ProjectContext.Provider value={{ getProjects, projects, createProject, loading, deleteProject, project, getProject }}>{children}</ProjectContext.Provider>;
 };
 
-export const useProjectContext = () => useContext(ProjectContext);
+export const useProjectContext = () => useContext<ProjectContextType | null>(ProjectContext);
 
 export default ProjectProvider;

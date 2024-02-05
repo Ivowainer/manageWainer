@@ -40,6 +40,21 @@ export class TaskManipulation {
         }
     }
 
+    async getTasks(userId: Types.ObjectId, projectId: string): Promise<DaosReturnTask> {
+        try {
+            const project = await validations.checkDocumentExists(Project, projectId);
+            await project.populate("tasks");
+
+            if (!project.collaborators.includes(userId.toString()) && project.creator.toString() != userId.toString()) {
+                throw { codeResponse: 401, message: "Unauthorized" };
+            }
+
+            return { codeResponse: 200, tasks: project.tasks as any };
+        } catch (error: any) {
+            throw { codeResponse: 500, message: error.message };
+        }
+    }
+
     async updateTask(userId: Types.ObjectId, taskId: string, taskInfo: Omit<ITask, "_id" | "project">): Promise<DaosReturnTask> {
         const { description, priority, title } = taskInfo;
 

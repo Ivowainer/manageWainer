@@ -5,6 +5,7 @@ import { IProject } from "./project.type";
 
 export interface DaosReturnTask extends DaosReturn {
     task?: ITask;
+    tasks?: ITask[];
     taskId?: Types.ObjectId;
 }
 
