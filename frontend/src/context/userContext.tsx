@@ -18,22 +18,33 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const [user, setUser] = useState(null);
 
     const { push, pathname } = useRouter();
-    const publicRoutes = ["/register", "/"];
-
-    useEffect(() => {
-        if (!getCookie("token")) {
-            setIsLoggedIn(false);
-        } else {
-            setIsLoggedIn(true);
-        }
-    }, []);
+    const publicRoutes = ["/register", "/", "/confirm/[exptoken]"];
 
     useEffect(() => {
         (async () => {
-            if(getCookie("token"))
-                setUser((await baseBackendUrl("/user")).data.user)
-            else
+            if(!getCookie("token")){
                 setUser(null)
+                setIsLoggedIn(false);
+                return;
+            }
+            
+            try {
+                const { data } = await baseBackendUrl("/user")
+
+                if(!(data?.user.confirmed) && !pathname.includes("/confirm/[exptoken]")){
+                    toast.error("You are not confirmed, please check the email")    
+                    setIsLoggedIn(false)
+                    return;  
+                } 
+
+                setUser(data?.user)
+                setIsLoggedIn(true)
+            } catch (error: any) {
+                toast.error(error.response.data.message)
+
+                setIsLoggedIn(false)
+            }
+            
         })()
     }, [isLoggedIn]);
 
@@ -132,7 +143,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         });
     };
 
-    return <UserContext.Provider value={{ registerUser, loginUser, user, logout }}>{children}</UserContext.Provider>;
+    return <UserContext.Provider value={{ registerUser, loginUser, user, logout, setIsLoggedIn }}>{children}</UserContext.Provider>;
 };
 
 export const useUserContext = () => useContext(UserContext)!;

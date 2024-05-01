@@ -15,6 +15,16 @@ export const createUser = async (req: Request, res: Response) => {
     }
 };
 
+export const confirmUser = async (req: Request, res: Response) => {
+    try {
+        const { codeResponse, message, user, token } = await DAOSUserManipulation.confirmUser(req.params.exptoken);
+
+        res.status(codeResponse).json({ message, user, token });
+    } catch (error: any) {
+        res.status(error.codeResponse || 500).json({ message: error.message });
+    }
+};
+
 export const loginUser = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 

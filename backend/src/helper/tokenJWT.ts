@@ -8,6 +8,13 @@ export const signToken = (_id: Types.ObjectId, email: string) => {
     return jwt.sign({ _id, email }, process.env.JWT_SECRET_SEED, { expiresIn: "30d" });
 };
 
+export const signExpToken = (email: string) => {
+    if (!process.env.JWT_SECRET_SEED) throw { codeResponse: 500, message: "Doesn't exists JWT SEED ENV variable" };
+
+    // Payload, seed, Opciones
+    return jwt.sign({ email }, process.env.JWT_SECRET_SEED);
+};
+
 export const isValidToken = (token: string): Promise<string> => {
     if (!process.env.JWT_SECRET_SEED) throw { codeResponse: 500, message: "Doesn't exists JWT SEED ENV variable" };
 

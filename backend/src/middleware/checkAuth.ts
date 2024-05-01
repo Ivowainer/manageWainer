@@ -22,7 +22,6 @@ const checkAuth = async (req: any, res: Response, next: NextFunction) => {
     }
 
     if (!token) {
-        console.log(req.cookies);
         res.status(401).json({ message: "The token isn't valid" });
     }
 };

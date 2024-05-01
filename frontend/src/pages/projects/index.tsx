@@ -19,8 +19,6 @@ const ProjectsPage = () => {
     }, []);
 
     return (
-        // TODO: MAINLAYOUT
-        // TODO: SOLUTION UNDEFINED NAME USER.USERNAME
         <>
             {loading ? (
                 <MainLayout pageName="Projects" pageDescription="Projects">

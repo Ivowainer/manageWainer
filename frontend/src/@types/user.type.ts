@@ -13,4 +13,5 @@ export type UserContextType = {
     loginUser: ({ email, password }: Pick<IUser, "email" | "password">) => any;
     logout: () => void;
     user: Pick<IUser, "username" | "email" | "_id"> | null;
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 };
